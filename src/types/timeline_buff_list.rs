@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct TimelineBuffList {
     pub id: i32,
     pub kind_id: i32,
     pub gfx_id: i32,
     pub for_player: bool,
     pub effect_ids: Vec<i32>,
-}
-
-impl BinaryData for TimelineBuffList {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        73
-    }
 }
 
 impl Decode for TimelineBuffList {
@@ -25,7 +21,7 @@ impl Decode for TimelineBuffList {
         let gfx_id = state.decode()?;
         let for_player = state.decode()?;
         let effect_ids = state.decode()?;
-        Ok(TimelineBuffList {
+        Ok(Self {
             id,
             kind_id,
             gfx_id,
@@ -33,4 +29,8 @@ impl Decode for TimelineBuffList {
             effect_ids,
         })
     }
+}
+
+impl BinaryData for TimelineBuffList {
+    const TYPE_ID: i16 = 73;
 }

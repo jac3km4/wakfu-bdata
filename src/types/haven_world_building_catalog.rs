@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingCatalog {
     pub id: i32,
     pub order: i32,
@@ -14,12 +16,6 @@ pub struct HavenWorldBuildingCatalog {
     pub is_deco_only: bool,
     pub building_sound_id: i32,
     pub building_condition: Vec<HavenWorldBuildingCatalogBuildingCondition>,
-}
-
-impl BinaryData for HavenWorldBuildingCatalog {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        104
-    }
 }
 
 impl Decode for HavenWorldBuildingCatalog {
@@ -33,7 +29,7 @@ impl Decode for HavenWorldBuildingCatalog {
         let is_deco_only = state.decode()?;
         let building_sound_id = state.decode()?;
         let building_condition = state.decode()?;
-        Ok(HavenWorldBuildingCatalog {
+        Ok(Self {
             id,
             order,
             building_type,
@@ -47,7 +43,11 @@ impl Decode for HavenWorldBuildingCatalog {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for HavenWorldBuildingCatalog {
+    const TYPE_ID: i16 = 104;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingCatalogBuildingCondition {
     pub building_type_needed: i32,
     pub quantity: i32,
@@ -57,7 +57,7 @@ impl Decode for HavenWorldBuildingCatalogBuildingCondition {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let building_type_needed = state.decode()?;
         let quantity = state.decode()?;
-        Ok(HavenWorldBuildingCatalogBuildingCondition {
+        Ok(Self {
             building_type_needed,
             quantity,
         })

@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct FixedAbilityCategory {
     pub category_id: i32,
     pub levels: Vec<i32>,
     pub bonus_ids: Vec<i32>,
-}
-
-impl BinaryData for FixedAbilityCategory {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        136
-    }
 }
 
 impl Decode for FixedAbilityCategory {
@@ -21,10 +17,14 @@ impl Decode for FixedAbilityCategory {
         let category_id = state.decode()?;
         let levels = state.decode()?;
         let bonus_ids = state.decode()?;
-        Ok(FixedAbilityCategory {
+        Ok(Self {
             category_id,
             levels,
             bonus_ids,
         })
     }
+}
+
+impl BinaryData for FixedAbilityCategory {
+    const TYPE_ID: i16 = 136;
 }

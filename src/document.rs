@@ -1,12 +1,14 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::fs::File;
 use std::io::{self};
-use std::marker::PhantomData;
 use std::path::Path;
+
 use zip::ZipArchive;
 
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
 #[derive(Debug, Clone)]
+#[allow(unused)]
 struct Entry {
     id: i64,
     position: u32,
@@ -61,22 +63,23 @@ impl Decode for Indexes {
 
 #[derive(Debug, Clone)]
 pub struct Document<A> {
-    entries: Vec<Entry>,
     pub indexes: Vec<Indexes>,
     pub elements: Vec<A>,
 }
 
 impl<A: BinaryData> Document<A> {
     pub fn load(root: &Path) -> io::Result<Document<A>> {
-        let index = BinaryData::id(PhantomData::<A>);
-        let path = root.join("contents").join("bdata").join(format!("{}.jar", index));
+        let path = root
+            .join("contents")
+            .join("bdata")
+            .join(format!("{}.jar", A::TYPE_ID));
         Document::load_file(File::open(path)?)
     }
 
-    pub fn load_file(file: File) -> io::Result<Document<A>> {
+    fn load_file(file: File) -> io::Result<Document<A>> {
         let mut archive = ZipArchive::new(file).unwrap();
         let entry = archive.by_index(0).unwrap();
-        let index = BinaryData::id(PhantomData::<A>);
+        let index = A::TYPE_ID.into();
         let mut state = DecodeState::new(entry, index)?;
         let entries: Vec<Entry> = state.decode()?;
         let index_count: i8 = state.decode()?;
@@ -90,10 +93,6 @@ impl<A: BinaryData> Document<A> {
         for _ in 0..entry_count {
             elements.push(state.decode()?);
         }
-        Ok(Document {
-            entries,
-            indexes,
-            elements,
-        })
+        Ok(Document { indexes, elements })
     }
 }

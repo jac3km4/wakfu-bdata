@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Item {
     pub id: i32,
     pub item_set_id: i16,
@@ -14,9 +16,9 @@ pub struct Item {
     pub criteria: Vec<String>,
     pub item_type_id: i32,
     pub max_stack_height: i16,
-    pub use_cost_a_p: i8,
-    pub use_cost_m_p: i8,
-    pub use_cost_f_p: i8,
+    pub use_cost_ap: i8,
+    pub use_cost_mp: i8,
+    pub use_cost_fp: i8,
     pub use_range_min: i32,
     pub use_range_max: i32,
     pub use_test_free_cell: bool,
@@ -40,12 +42,6 @@ pub struct Item {
     pub _32: Option<Item_32>,
 }
 
-impl BinaryData for Item {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        35
-    }
-}
-
 impl Decode for Item {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
@@ -57,9 +53,9 @@ impl Decode for Item {
         let criteria = state.decode()?;
         let item_type_id = state.decode()?;
         let max_stack_height = state.decode()?;
-        let use_cost_a_p = state.decode()?;
-        let use_cost_m_p = state.decode()?;
-        let use_cost_f_p = state.decode()?;
+        let use_cost_ap = state.decode()?;
+        let use_cost_mp = state.decode()?;
+        let use_cost_fp = state.decode()?;
         let use_range_min = state.decode()?;
         let use_range_max = state.decode()?;
         let use_test_free_cell = state.decode()?;
@@ -81,7 +77,7 @@ impl Decode for Item {
         let actions = state.decode()?;
         let _31 = state.decode()?;
         let _32 = state.decode()?;
-        Ok(Item {
+        Ok(Self {
             id,
             item_set_id,
             gfx_id,
@@ -91,9 +87,9 @@ impl Decode for Item {
             criteria,
             item_type_id,
             max_stack_height,
-            use_cost_a_p,
-            use_cost_m_p,
-            use_cost_f_p,
+            use_cost_ap,
+            use_cost_mp,
+            use_cost_fp,
             use_range_min,
             use_range_max,
             use_test_free_cell,
@@ -119,45 +115,11 @@ impl Decode for Item {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct Item_32 {
-    pub _0: i32,
-    pub _1: Vec<i8>,
-    pub _2: bool,
-    pub _3: bool,
+impl BinaryData for Item {
+    const TYPE_ID: i16 = 35;
 }
 
-impl Decode for Item_32 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        let _2 = state.decode()?;
-        let _3 = state.decode()?;
-        Ok(Item_32 { _0, _1, _2, _3 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct Item_31 {
-    pub _0: i8,
-    pub _1: Vec<i8>,
-    pub _2: Vec<i32>,
-    pub _3: Vec<i32>,
-    pub _4: bool,
-}
-
-impl Decode for Item_31 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        let _2 = state.decode()?;
-        let _3 = state.decode()?;
-        let _4 = state.decode()?;
-        Ok(Item_31 { _0, _1, _2, _3, _4 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ItemActions {
     pub action_id: i32,
     pub action_type_id: i32,
@@ -181,7 +143,7 @@ impl Decode for ItemActions {
         let criteria = state.decode()?;
         let action_params = state.decode()?;
         let action_script_params = state.decode()?;
-        Ok(ItemActions {
+        Ok(Self {
             action_id,
             action_type_id,
             consume_item_on_action,
@@ -192,5 +154,43 @@ impl Decode for ItemActions {
             action_params,
             action_script_params,
         })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Item_31 {
+    pub _0: i8,
+    pub _1: Vec<i8>,
+    pub _2: Vec<i32>,
+    pub _3: Vec<i32>,
+    pub _4: bool,
+}
+
+impl Decode for Item_31 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        let _2 = state.decode()?;
+        let _3 = state.decode()?;
+        let _4 = state.decode()?;
+        Ok(Self { _0, _1, _2, _3, _4 })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Item_32 {
+    pub _0: i32,
+    pub _1: Vec<i8>,
+    pub _2: bool,
+    pub _3: bool,
+}
+
+impl Decode for Item_32 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        let _2 = state.decode()?;
+        let _3 = state.decode()?;
+        Ok(Self { _0, _1, _2, _3 })
     }
 }

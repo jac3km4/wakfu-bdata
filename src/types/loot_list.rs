@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct LootList {
     pub _0: i32,
     pub _1: i16,
     pub _2: Vec<LootList_2>,
-}
-
-impl BinaryData for LootList {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        39
-    }
 }
 
 impl Decode for LootList {
@@ -21,11 +17,15 @@ impl Decode for LootList {
         let _0 = state.decode()?;
         let _1 = state.decode()?;
         let _2 = state.decode()?;
-        Ok(LootList { _0, _1, _2 })
+        Ok(Self { _0, _1, _2 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for LootList {
+    const TYPE_ID: i16 = 39;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct LootList_2 {
     pub _0: i32,
     pub _1: f64,
@@ -49,7 +49,7 @@ impl Decode for LootList_2 {
         let _6 = state.decode()?;
         let _7 = state.decode()?;
         let _8 = state.decode()?;
-        Ok(LootList_2 {
+        Ok(Self {
             _0,
             _1,
             _2,

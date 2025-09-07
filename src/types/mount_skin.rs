@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MountSkin {
     pub _0: i32,
     pub _1: i32,
     pub _2: i32,
     pub _3: i32,
     pub _4: i32,
-}
-
-impl BinaryData for MountSkin {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        143
-    }
 }
 
 impl Decode for MountSkin {
@@ -25,6 +21,10 @@ impl Decode for MountSkin {
         let _2 = state.decode()?;
         let _3 = state.decode()?;
         let _4 = state.decode()?;
-        Ok(MountSkin { _0, _1, _2, _3, _4 })
+        Ok(Self { _0, _1, _2, _3, _4 })
     }
+}
+
+impl BinaryData for MountSkin {
+    const TYPE_ID: i16 = 143;
 }

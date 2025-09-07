@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Cannon {
     pub cannon_id: i32,
     pub visual_id: i32,
@@ -12,12 +14,6 @@ pub struct Cannon {
     pub item_id: i32,
     pub item_qty: i32,
     pub _6: Vec<Cannon_6>,
-}
-
-impl BinaryData for Cannon {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        12
-    }
 }
 
 impl Decode for Cannon {
@@ -29,7 +25,7 @@ impl Decode for Cannon {
         let item_id = state.decode()?;
         let item_qty = state.decode()?;
         let _6 = state.decode()?;
-        Ok(Cannon {
+        Ok(Self {
             cannon_id,
             visual_id,
             ui_gfx_id,
@@ -41,7 +37,11 @@ impl Decode for Cannon {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Cannon {
+    const TYPE_ID: i16 = 12;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Cannon_6_6 {
     pub _0: String,
     pub _1: i32,
@@ -55,11 +55,11 @@ impl Decode for Cannon_6_6 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(Cannon_6_6 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Cannon_6 {
     pub _0: i32,
     pub _1: i32,
@@ -79,7 +79,7 @@ impl Decode for Cannon_6 {
         let _4 = state.decode()?;
         let _5 = state.decode()?;
         let _6 = state.decode()?;
-        Ok(Cannon_6 {
+        Ok(Self {
             _0,
             _1,
             _2,

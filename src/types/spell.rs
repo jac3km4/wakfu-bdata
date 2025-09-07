@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Spell {
     pub id: i32,
     pub script_id: i32,
@@ -24,12 +26,12 @@ pub struct Spell {
     pub target_filter: i32,
     pub cast_criterion: String,
     pub _18: i16,
-    pub p_a_base: f32,
-    pub p_a_inc: f32,
-    pub p_m_base: f32,
-    pub p_m_inc: f32,
-    pub p_w_base: f32,
-    pub p_w_inc: f32,
+    pub pa_base: f32,
+    pub pa_inc: f32,
+    pub pm_base: f32,
+    pub pm_inc: f32,
+    pub pw_base: f32,
+    pub pw_inc: f32,
     pub range_max_base: f32,
     pub range_max_inc: f32,
     pub range_min_base: f32,
@@ -59,12 +61,6 @@ pub struct Spell {
     pub _51: std::collections::HashMap<String, Spell_51>,
 }
 
-impl BinaryData for Spell {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        66
-    }
-}
-
 impl Decode for Spell {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
@@ -86,12 +82,12 @@ impl Decode for Spell {
         let target_filter = state.decode()?;
         let cast_criterion = state.decode()?;
         let _18 = state.decode()?;
-        let p_a_base = state.decode()?;
-        let p_a_inc = state.decode()?;
-        let p_m_base = state.decode()?;
-        let p_m_inc = state.decode()?;
-        let p_w_base = state.decode()?;
-        let p_w_inc = state.decode()?;
+        let pa_base = state.decode()?;
+        let pa_inc = state.decode()?;
+        let pm_base = state.decode()?;
+        let pm_inc = state.decode()?;
+        let pw_base = state.decode()?;
+        let pw_inc = state.decode()?;
         let range_max_base = state.decode()?;
         let range_max_inc = state.decode()?;
         let range_min_base = state.decode()?;
@@ -119,7 +115,7 @@ impl Decode for Spell {
         let base_cast_parameters = state.decode()?;
         let _50 = state.decode()?;
         let _51 = state.decode()?;
-        Ok(Spell {
+        Ok(Self {
             id,
             script_id,
             gfx_id,
@@ -139,12 +135,12 @@ impl Decode for Spell {
             target_filter,
             cast_criterion,
             _18,
-            p_a_base,
-            p_a_inc,
-            p_m_base,
-            p_m_inc,
-            p_w_base,
-            p_w_inc,
+            pa_base,
+            pa_inc,
+            pm_base,
+            pm_inc,
+            pw_base,
+            pw_inc,
             range_max_base,
             range_max_inc,
             range_min_base,
@@ -176,7 +172,39 @@ impl Decode for Spell {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Spell {
+    const TYPE_ID: i16 = 66;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SpellBaseCastParameters {
+    pub base: i32,
+    pub increment: f32,
+}
+
+impl Decode for SpellBaseCastParameters {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let base = state.decode()?;
+        let increment = state.decode()?;
+        Ok(Self { base, increment })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Spell_50 {
+    pub _0: i16,
+    pub _1: Vec<i32>,
+}
+
+impl Decode for Spell_50 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        Ok(Self { _0, _1 })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Spell_51_1 {
     pub _0: i32,
     pub _1: f32,
@@ -186,11 +214,11 @@ impl Decode for Spell_51_1 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let _0 = state.decode()?;
         let _1 = state.decode()?;
-        Ok(Spell_51_1 { _0, _1 })
+        Ok(Self { _0, _1 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Spell_51 {
     pub _0: i32,
     pub _1: std::collections::HashMap<i32, Spell_51_1>,
@@ -244,7 +272,7 @@ impl Decode for Spell_51 {
         let _21 = state.decode()?;
         let _22 = state.decode()?;
         let _23 = state.decode()?;
-        Ok(Spell_51 {
+        Ok(Self {
             _0,
             _1,
             _2,
@@ -270,33 +298,5 @@ impl Decode for Spell_51 {
             _22,
             _23,
         })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct Spell_50 {
-    pub _0: i16,
-    pub _1: Vec<i32>,
-}
-
-impl Decode for Spell_50 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        Ok(Spell_50 { _0, _1 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct SpellBaseCastParameters {
-    pub base: i32,
-    pub increment: f32,
-}
-
-impl Decode for SpellBaseCastParameters {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let base = state.decode()?;
-        let increment = state.decode()?;
-        Ok(SpellBaseCastParameters { base, increment })
     }
 }

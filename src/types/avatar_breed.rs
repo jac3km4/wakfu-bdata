@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct AvatarBreed {
     pub id: i32,
     pub name: String,
@@ -24,12 +26,6 @@ pub struct AvatarBreed {
     pub spell_elements: Vec<i8>,
     pub charac_ratios: Vec<f32>,
     pub _18: Vec<i16>,
-}
-
-impl BinaryData for AvatarBreed {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        86
-    }
 }
 
 impl Decode for AvatarBreed {
@@ -53,7 +49,7 @@ impl Decode for AvatarBreed {
         let spell_elements = state.decode()?;
         let charac_ratios = state.decode()?;
         let _18 = state.decode()?;
-        Ok(AvatarBreed {
+        Ok(Self {
             id,
             name,
             background_aps,
@@ -75,4 +71,8 @@ impl Decode for AvatarBreed {
             _18,
         })
     }
+}
+
+impl BinaryData for AvatarBreed {
+    const TYPE_ID: i16 = 86;
 }

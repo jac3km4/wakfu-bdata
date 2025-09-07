@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Dungeon {
     pub id: i32,
     pub min_level: i16,
@@ -18,12 +20,6 @@ pub struct Dungeon {
     pub _10: String,
     pub _11: i16,
     pub _12: i32,
-}
-
-impl BinaryData for Dungeon {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        119
-    }
 }
 
 impl Decode for Dungeon {
@@ -41,7 +37,7 @@ impl Decode for Dungeon {
         let _10 = state.decode()?;
         let _11 = state.decode()?;
         let _12 = state.decode()?;
-        Ok(Dungeon {
+        Ok(Self {
             id,
             min_level,
             instance_id,
@@ -57,4 +53,8 @@ impl Decode for Dungeon {
             _12,
         })
     }
+}
+
+impl BinaryData for Dungeon {
+    const TYPE_ID: i16 = 119;
 }

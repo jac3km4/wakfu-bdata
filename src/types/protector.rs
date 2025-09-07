@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Protector {
     pub protector_id: i32,
     pub monster_id: i32,
@@ -22,12 +24,6 @@ pub struct Protector {
     pub secrets: Vec<ProtectorSecrets>,
     pub fauna_will: Vec<ProtectorFaunaWill>,
     pub flora_will: Vec<ProtectorFloraWill>,
-}
-
-impl BinaryData for Protector {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        54
-    }
 }
 
 impl Decode for Protector {
@@ -49,7 +45,7 @@ impl Decode for Protector {
         let secrets = state.decode()?;
         let fauna_will = state.decode()?;
         let flora_will = state.decode()?;
-        Ok(Protector {
+        Ok(Self {
             protector_id,
             monster_id,
             buff_list_id,
@@ -71,39 +67,11 @@ impl Decode for Protector {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct ProtectorFloraWill {
-    pub kind_id: i32,
-    pub min: i16,
-    pub max: i16,
+impl BinaryData for Protector {
+    const TYPE_ID: i16 = 54;
 }
 
-impl Decode for ProtectorFloraWill {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let kind_id = state.decode()?;
-        let min = state.decode()?;
-        let max = state.decode()?;
-        Ok(ProtectorFloraWill { kind_id, min, max })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct ProtectorFaunaWill {
-    pub kind_id: i32,
-    pub min: i16,
-    pub max: i16,
-}
-
-impl Decode for ProtectorFaunaWill {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let kind_id = state.decode()?;
-        let min = state.decode()?;
-        let max = state.decode()?;
-        Ok(ProtectorFaunaWill { kind_id, min, max })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ProtectorSecrets {
     pub id: i32,
     pub achievement_goal_id: i32,
@@ -117,11 +85,43 @@ impl Decode for ProtectorSecrets {
         let achievement_goal_id = state.decode()?;
         let secret_gfx_id = state.decode()?;
         let discovered_gfx_id = state.decode()?;
-        Ok(ProtectorSecrets {
+        Ok(Self {
             id,
             achievement_goal_id,
             secret_gfx_id,
             discovered_gfx_id,
         })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ProtectorFaunaWill {
+    pub kind_id: i32,
+    pub min: i16,
+    pub max: i16,
+}
+
+impl Decode for ProtectorFaunaWill {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let kind_id = state.decode()?;
+        let min = state.decode()?;
+        let max = state.decode()?;
+        Ok(Self { kind_id, min, max })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ProtectorFloraWill {
+    pub kind_id: i32,
+    pub min: i16,
+    pub max: i16,
+}
+
+impl Decode for ProtectorFloraWill {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let kind_id = state.decode()?;
+        let min = state.decode()?;
+        let max = state.decode()?;
+        Ok(Self { kind_id, min, max })
     }
 }

@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct LootChestIeParam {
     pub id: i32,
     pub visual_id: i32,
@@ -17,12 +19,6 @@ pub struct LootChestIeParam {
     pub distribution_duration: i32,
     pub criteria: String,
     pub _11: LootChestIeParam_11,
-}
-
-impl BinaryData for LootChestIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        38
-    }
 }
 
 impl Decode for LootChestIeParam {
@@ -39,7 +35,7 @@ impl Decode for LootChestIeParam {
         let distribution_duration = state.decode()?;
         let criteria = state.decode()?;
         let _11 = state.decode()?;
-        Ok(LootChestIeParam {
+        Ok(Self {
             id,
             visual_id,
             cooldown,
@@ -56,7 +52,11 @@ impl Decode for LootChestIeParam {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for LootChestIeParam {
+    const TYPE_ID: i16 = 38;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct LootChestIeParam_11 {
     pub _0: i8,
     pub _1: i32,
@@ -66,6 +66,6 @@ impl Decode for LootChestIeParam_11 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let _0 = state.decode()?;
         let _1 = state.decode()?;
-        Ok(LootChestIeParam_11 { _0, _1 })
+        Ok(Self { _0, _1 })
     }
 }

@@ -1,20 +1,16 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct StorageBox {
     pub id: i32,
     pub visual_id: i32,
     pub _2: StorageBox_2,
     pub compartments: Vec<StorageBoxCompartments>,
-}
-
-impl BinaryData for StorageBox {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        70
-    }
 }
 
 impl Decode for StorageBox {
@@ -23,7 +19,7 @@ impl Decode for StorageBox {
         let visual_id = state.decode()?;
         let _2 = state.decode()?;
         let compartments = state.decode()?;
-        Ok(StorageBox {
+        Ok(Self {
             id,
             visual_id,
             _2,
@@ -32,7 +28,25 @@ impl Decode for StorageBox {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for StorageBox {
+    const TYPE_ID: i16 = 70;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct StorageBox_2 {
+    pub _0: i8,
+    pub _1: i32,
+}
+
+impl Decode for StorageBox_2 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        Ok(Self { _0, _1 })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct StorageBoxCompartments {
     pub uid: i32,
     pub box_id: i32,
@@ -48,26 +62,12 @@ impl Decode for StorageBoxCompartments {
         let unlock_item_id = state.decode()?;
         let capacity = state.decode()?;
         let compartment_order = state.decode()?;
-        Ok(StorageBoxCompartments {
+        Ok(Self {
             uid,
             box_id,
             unlock_item_id,
             capacity,
             compartment_order,
         })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct StorageBox_2 {
-    pub _0: i8,
-    pub _1: i32,
-}
-
-impl Decode for StorageBox_2 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        Ok(StorageBox_2 { _0, _1 })
     }
 }

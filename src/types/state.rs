@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct State {
     pub id: i32,
     pub max_level: i16,
@@ -30,12 +32,6 @@ pub struct State {
     pub _22: String,
     pub display_caster_name: bool,
     pub _24: i16,
-}
-
-impl BinaryData for State {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        67
-    }
 }
 
 impl Decode for State {
@@ -65,7 +61,7 @@ impl Decode for State {
         let _22 = state.decode()?;
         let display_caster_name = state.decode()?;
         let _24 = state.decode()?;
-        Ok(State {
+        Ok(Self {
             id,
             max_level,
             end_trigger,
@@ -93,4 +89,8 @@ impl Decode for State {
             _24,
         })
     }
+}
+
+impl BinaryData for State {
+    const TYPE_ID: i16 = 67;
 }

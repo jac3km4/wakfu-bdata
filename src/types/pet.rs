@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Pet {
     pub id: i32,
     pub item_ref_id: i32,
@@ -21,12 +23,6 @@ pub struct Pet {
     pub sleep_items: Vec<PetSleepItems>,
     pub equipment_items: Vec<i32>,
     pub color_items: Vec<PetColorItems>,
-}
-
-impl BinaryData for Pet {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        117
-    }
 }
 
 impl Decode for Pet {
@@ -47,7 +43,7 @@ impl Decode for Pet {
         let sleep_items = state.decode()?;
         let equipment_items = state.decode()?;
         let color_items = state.decode()?;
-        Ok(Pet {
+        Ok(Self {
             id,
             item_ref_id,
             gfx_id,
@@ -68,69 +64,11 @@ impl Decode for Pet {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct PetColorItems {
-    pub item_id: i32,
-    pub part_id: i32,
-    pub color_a_b_g_r: i32,
+impl BinaryData for Pet {
+    const TYPE_ID: i16 = 117;
 }
 
-impl Decode for PetColorItems {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let part_id = state.decode()?;
-        let color_a_b_g_r = state.decode()?;
-        Ok(PetColorItems {
-            item_id,
-            part_id,
-            color_a_b_g_r,
-        })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct PetSleepItems {
-    pub item_id: i32,
-    pub duration: i64,
-}
-
-impl Decode for PetSleepItems {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let duration = state.decode()?;
-        Ok(PetSleepItems { item_id, duration })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct PetMealItems {
-    pub item_id: i32,
-    pub visible: bool,
-}
-
-impl Decode for PetMealItems {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let visible = state.decode()?;
-        Ok(PetMealItems { item_id, visible })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct PetHealthItems {
-    pub item_id: i32,
-    pub value: i32,
-}
-
-impl Decode for PetHealthItems {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let value = state.decode()?;
-        Ok(PetHealthItems { item_id, value })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PetHealthPenalties {
     pub penalty_type: i8,
     pub value: i8,
@@ -140,6 +78,71 @@ impl Decode for PetHealthPenalties {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let penalty_type = state.decode()?;
         let value = state.decode()?;
-        Ok(PetHealthPenalties { penalty_type, value })
+        Ok(Self {
+            penalty_type,
+            value,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PetHealthItems {
+    pub item_id: i32,
+    pub value: i32,
+}
+
+impl Decode for PetHealthItems {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let value = state.decode()?;
+        Ok(Self { item_id, value })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PetMealItems {
+    pub item_id: i32,
+    pub visible: bool,
+}
+
+impl Decode for PetMealItems {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let visible = state.decode()?;
+        Ok(Self { item_id, visible })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PetSleepItems {
+    pub item_id: i32,
+    pub duration: i64,
+}
+
+impl Decode for PetSleepItems {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let duration = state.decode()?;
+        Ok(Self { item_id, duration })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PetColorItems {
+    pub item_id: i32,
+    pub part_id: i32,
+    pub color_abgr: i32,
+}
+
+impl Decode for PetColorItems {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let part_id = state.decode()?;
+        let color_abgr = state.decode()?;
+        Ok(Self {
+            item_id,
+            part_id,
+            color_abgr,
+        })
     }
 }

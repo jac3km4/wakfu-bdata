@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct NationLaw {
     pub id: i32,
     pub law_constant_id: i32,
@@ -16,12 +18,6 @@ pub struct NationLaw {
     pub applicable_to_allied_foreigner: bool,
     pub applicable_to_neutral_foreigner: bool,
     pub restricted_nations: Vec<i32>,
-}
-
-impl BinaryData for NationLaw {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        52
-    }
 }
 
 impl Decode for NationLaw {
@@ -37,7 +33,7 @@ impl Decode for NationLaw {
         let applicable_to_allied_foreigner = state.decode()?;
         let applicable_to_neutral_foreigner = state.decode()?;
         let restricted_nations = state.decode()?;
-        Ok(NationLaw {
+        Ok(Self {
             id,
             law_constant_id,
             params,
@@ -51,4 +47,8 @@ impl Decode for NationLaw {
             restricted_nations,
         })
     }
+}
+
+impl BinaryData for NationLaw {
+    const TYPE_ID: i16 = 52;
 }

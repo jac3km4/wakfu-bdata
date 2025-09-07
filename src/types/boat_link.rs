@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct BoatLink {
     pub id: i32,
     pub start: i32,
@@ -12,12 +14,6 @@ pub struct BoatLink {
     pub criteria_display: String,
     pub needs_to_pay_everytime: bool,
     pub _6: BoatLink_6,
-}
-
-impl BinaryData for BoatLink {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        9
-    }
 }
 
 impl Decode for BoatLink {
@@ -29,7 +25,7 @@ impl Decode for BoatLink {
         let criteria_display = state.decode()?;
         let needs_to_pay_everytime = state.decode()?;
         let _6 = state.decode()?;
-        Ok(BoatLink {
+        Ok(Self {
             id,
             start,
             end,
@@ -41,7 +37,11 @@ impl Decode for BoatLink {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for BoatLink {
+    const TYPE_ID: i16 = 9;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct BoatLink_6 {
     pub _0: String,
     pub _1: i32,
@@ -55,6 +55,6 @@ impl Decode for BoatLink_6 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(BoatLink_6 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }

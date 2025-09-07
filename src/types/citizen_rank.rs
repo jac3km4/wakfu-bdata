@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct CitizenRank {
     pub id: i32,
     pub cap: i32,
@@ -11,12 +13,6 @@ pub struct CitizenRank {
     pub translation_key: String,
     pub color: String,
     pub rules: Vec<i32>,
-}
-
-impl BinaryData for CitizenRank {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        17
-    }
 }
 
 impl Decode for CitizenRank {
@@ -27,7 +23,7 @@ impl Decode for CitizenRank {
         let translation_key = state.decode()?;
         let color = state.decode()?;
         let rules = state.decode()?;
-        Ok(CitizenRank {
+        Ok(Self {
             id,
             cap,
             pdc_loss_factor,
@@ -36,4 +32,8 @@ impl Decode for CitizenRank {
             rules,
         })
     }
+}
+
+impl BinaryData for CitizenRank {
+    const TYPE_ID: i16 = 17;
 }

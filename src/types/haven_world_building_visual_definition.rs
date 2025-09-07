@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingVisualDefinition {
     pub id: i32,
     pub building_id: i32,
     pub elements: Vec<HavenWorldBuildingVisualDefinitionElements>,
-}
-
-impl BinaryData for HavenWorldBuildingVisualDefinition {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        107
-    }
 }
 
 impl Decode for HavenWorldBuildingVisualDefinition {
@@ -21,7 +17,7 @@ impl Decode for HavenWorldBuildingVisualDefinition {
         let id = state.decode()?;
         let building_id = state.decode()?;
         let elements = state.decode()?;
-        Ok(HavenWorldBuildingVisualDefinition {
+        Ok(Self {
             id,
             building_id,
             elements,
@@ -29,7 +25,11 @@ impl Decode for HavenWorldBuildingVisualDefinition {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for HavenWorldBuildingVisualDefinition {
+    const TYPE_ID: i16 = 107;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingVisualDefinitionElements {
     pub uid: i32,
     pub gfx_id: i32,
@@ -55,7 +55,7 @@ impl Decode for HavenWorldBuildingVisualDefinitionElements {
         let x = state.decode()?;
         let y = state.decode()?;
         let z = state.decode()?;
-        Ok(HavenWorldBuildingVisualDefinitionElements {
+        Ok(Self {
             uid,
             gfx_id,
             has_guild_color,

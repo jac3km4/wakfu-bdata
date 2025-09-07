@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Treasure {
     pub id: i32,
     pub used_item: i32,
@@ -14,12 +16,6 @@ pub struct Treasure {
     pub duration: i32,
     pub criterion: String,
     pub win_percent: f32,
-}
-
-impl BinaryData for Treasure {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        122
-    }
 }
 
 impl Decode for Treasure {
@@ -33,7 +29,7 @@ impl Decode for Treasure {
         let duration = state.decode()?;
         let criterion = state.decode()?;
         let win_percent = state.decode()?;
-        Ok(Treasure {
+        Ok(Self {
             id,
             used_item,
             reward_item,
@@ -45,4 +41,8 @@ impl Decode for Treasure {
             win_percent,
         })
     }
+}
+
+impl BinaryData for Treasure {
+    const TYPE_ID: i16 = 122;
 }

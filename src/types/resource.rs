@@ -1,19 +1,21 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Resource {
     pub id: i32,
     pub kind: i32,
     pub _2: i32,
     pub ideal_rain_min: i16,
     pub ideal_rain_max: i16,
-    pub _5: bool,
     pub is_blocking: bool,
     pub use_big_challenge_aps: bool,
     pub is_monster_embryo: bool,
+    pub _8: bool,
     pub monster_step_hatching: i16,
     pub properties: Vec<i32>,
     pub monster_families: Vec<i32>,
@@ -23,12 +25,6 @@ pub struct Resource {
     pub _15: std::collections::HashMap<i64, Vec<i32>>,
 }
 
-impl BinaryData for Resource {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        60
-    }
-}
-
 impl Decode for Resource {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
@@ -36,10 +32,10 @@ impl Decode for Resource {
         let _2 = state.decode()?;
         let ideal_rain_min = state.decode()?;
         let ideal_rain_max = state.decode()?;
-        let _5 = state.decode()?;
         let is_blocking = state.decode()?;
         let use_big_challenge_aps = state.decode()?;
         let is_monster_embryo = state.decode()?;
+        let _8 = state.decode()?;
         let monster_step_hatching = state.decode()?;
         let properties = state.decode()?;
         let monster_families = state.decode()?;
@@ -47,16 +43,16 @@ impl Decode for Resource {
         let height = state.decode()?;
         let icon_gfx_id = state.decode()?;
         let _15 = state.decode()?;
-        Ok(Resource {
+        Ok(Self {
             id,
             kind,
             _2,
             ideal_rain_min,
             ideal_rain_max,
-            _5,
             is_blocking,
             use_big_challenge_aps,
             is_monster_embryo,
+            _8,
             monster_step_hatching,
             properties,
             monster_families,
@@ -68,7 +64,11 @@ impl Decode for Resource {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Resource {
+    const TYPE_ID: i16 = 60;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Resource_12_1 {
     pub _0: i32,
     pub _1: i32,
@@ -108,7 +108,7 @@ impl Decode for Resource_12_1 {
         let _14 = state.decode()?;
         let _15 = state.decode()?;
         let _16 = state.decode()?;
-        Ok(Resource_12_1 {
+        Ok(Self {
             _0,
             _1,
             _2,
@@ -130,7 +130,7 @@ impl Decode for Resource_12_1 {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Resource_12 {
     pub _0: i32,
     pub _1: Vec<Resource_12_1>,
@@ -152,7 +152,7 @@ impl Decode for Resource_12 {
         let _5 = state.decode()?;
         let _6 = state.decode()?;
         let _7 = state.decode()?;
-        Ok(Resource_12 {
+        Ok(Self {
             _0,
             _1,
             _2,

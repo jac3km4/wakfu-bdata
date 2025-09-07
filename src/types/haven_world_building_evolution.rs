@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingEvolution {
     pub id: i32,
     pub catalog_entry_id: i16,
@@ -11,12 +13,6 @@ pub struct HavenWorldBuildingEvolution {
     pub to_id: i32,
     pub delay: i64,
     pub order: i8,
-}
-
-impl BinaryData for HavenWorldBuildingEvolution {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        103
-    }
 }
 
 impl Decode for HavenWorldBuildingEvolution {
@@ -27,7 +23,7 @@ impl Decode for HavenWorldBuildingEvolution {
         let to_id = state.decode()?;
         let delay = state.decode()?;
         let order = state.decode()?;
-        Ok(HavenWorldBuildingEvolution {
+        Ok(Self {
             id,
             catalog_entry_id,
             from_id,
@@ -36,4 +32,8 @@ impl Decode for HavenWorldBuildingEvolution {
             order,
         })
     }
+}
+
+impl BinaryData for HavenWorldBuildingEvolution {
+    const TYPE_ID: i16 = 103;
 }

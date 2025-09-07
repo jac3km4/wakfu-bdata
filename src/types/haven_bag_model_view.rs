@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenBagModelView {
     pub id: i32,
     pub restriction_world: bool,
@@ -13,12 +15,6 @@ pub struct HavenBagModelView {
     pub _5: f32,
     pub _6: f32,
     pub _7: f32,
-}
-
-impl BinaryData for HavenBagModelView {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        33
-    }
 }
 
 impl Decode for HavenBagModelView {
@@ -31,7 +27,7 @@ impl Decode for HavenBagModelView {
         let _5 = state.decode()?;
         let _6 = state.decode()?;
         let _7 = state.decode()?;
-        Ok(HavenBagModelView {
+        Ok(Self {
             id,
             restriction_world,
             restriction_market,
@@ -42,4 +38,8 @@ impl Decode for HavenBagModelView {
             _7,
         })
     }
+}
+
+impl BinaryData for HavenBagModelView {
+    const TYPE_ID: i16 = 33;
 }

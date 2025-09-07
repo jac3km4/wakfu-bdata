@@ -1,24 +1,24 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct NationColors {
     pub id: i32,
     pub color: String,
-}
-
-impl BinaryData for NationColors {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        51
-    }
 }
 
 impl Decode for NationColors {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
         let color = state.decode()?;
-        Ok(NationColors { id, color })
+        Ok(Self { id, color })
     }
+}
+
+impl BinaryData for NationColors {
+    const TYPE_ID: i16 = 51;
 }

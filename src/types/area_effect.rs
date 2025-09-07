@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct AreaEffect {
     pub id: i32,
     pub script_id: i32,
@@ -11,9 +13,9 @@ pub struct AreaEffect {
     pub max_execution_count: i32,
     pub targets_to_show: i32,
     pub can_be_targeted: bool,
-    pub obstacle_for_a_i: bool,
+    pub obstacle_for_ai: bool,
     pub should_stop_movement: bool,
-    pub can_be_targeted_by_a_i: bool,
+    pub can_be_targeted_by_ai: bool,
     pub can_be_destroyed: bool,
     pub kind: String,
     pub area_area_params: Vec<i32>,
@@ -31,12 +33,6 @@ pub struct AreaEffect {
     pub max_level: i32,
 }
 
-impl BinaryData for AreaEffect {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        4
-    }
-}
-
 impl Decode for AreaEffect {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
@@ -45,9 +41,9 @@ impl Decode for AreaEffect {
         let max_execution_count = state.decode()?;
         let targets_to_show = state.decode()?;
         let can_be_targeted = state.decode()?;
-        let obstacle_for_a_i = state.decode()?;
+        let obstacle_for_ai = state.decode()?;
         let should_stop_movement = state.decode()?;
-        let can_be_targeted_by_a_i = state.decode()?;
+        let can_be_targeted_by_ai = state.decode()?;
         let can_be_destroyed = state.decode()?;
         let kind = state.decode()?;
         let area_area_params = state.decode()?;
@@ -63,16 +59,16 @@ impl Decode for AreaEffect {
         let aps = state.decode()?;
         let cell_aps = state.decode()?;
         let max_level = state.decode()?;
-        Ok(AreaEffect {
+        Ok(Self {
             id,
             script_id,
             area_area_id,
             max_execution_count,
             targets_to_show,
             can_be_targeted,
-            obstacle_for_a_i,
+            obstacle_for_ai,
             should_stop_movement,
-            can_be_targeted_by_a_i,
+            can_be_targeted_by_ai,
             can_be_destroyed,
             kind,
             area_area_params,
@@ -90,4 +86,8 @@ impl Decode for AreaEffect {
             max_level,
         })
     }
+}
+
+impl BinaryData for AreaEffect {
+    const TYPE_ID: i16 = 4;
 }

@@ -1,20 +1,16 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct PvpBattleground {
     pub _0: i32,
     pub _1: i32,
     pub _2: Vec<PvpBattleground_2>,
     pub _3: Vec<PvpBattleground_3>,
-}
-
-impl BinaryData for PvpBattleground {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        140
-    }
 }
 
 impl Decode for PvpBattleground {
@@ -23,25 +19,15 @@ impl Decode for PvpBattleground {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(PvpBattleground { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct PvpBattleground_3 {
-    pub _0: i32,
-    pub _1: i32,
+impl BinaryData for PvpBattleground {
+    const TYPE_ID: i16 = 140;
 }
 
-impl Decode for PvpBattleground_3 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        Ok(PvpBattleground_3 { _0, _1 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct PvpBattleground_2 {
     pub _0: i32,
     pub _1: i32,
@@ -61,7 +47,7 @@ impl Decode for PvpBattleground_2 {
         let _4 = state.decode()?;
         let _5 = state.decode()?;
         let _6 = state.decode()?;
-        Ok(PvpBattleground_2 {
+        Ok(Self {
             _0,
             _1,
             _2,
@@ -70,5 +56,19 @@ impl Decode for PvpBattleground_2 {
             _5,
             _6,
         })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PvpBattleground_3 {
+    pub _0: i32,
+    pub _1: i32,
+}
+
+impl Decode for PvpBattleground_3 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        Ok(Self { _0, _1 })
     }
 }

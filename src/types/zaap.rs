@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Zaap {
     pub zaap_id: i32,
     pub exit_x: i32,
@@ -17,12 +19,6 @@ pub struct Zaap {
     pub _9: i32,
     pub _10: i32,
     pub _11: Zaap_11,
-}
-
-impl BinaryData for Zaap {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        76
-    }
 }
 
 impl Decode for Zaap {
@@ -39,7 +35,7 @@ impl Decode for Zaap {
         let _9 = state.decode()?;
         let _10 = state.decode()?;
         let _11 = state.decode()?;
-        Ok(Zaap {
+        Ok(Self {
             zaap_id,
             exit_x,
             exit_y,
@@ -56,7 +52,11 @@ impl Decode for Zaap {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Zaap {
+    const TYPE_ID: i16 = 76;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Zaap_11 {
     pub _0: String,
     pub _1: i32,
@@ -70,6 +70,6 @@ impl Decode for Zaap_11 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(Zaap_11 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }

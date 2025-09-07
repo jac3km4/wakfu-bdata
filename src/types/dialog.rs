@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Dialog {
     pub id: i32,
     pub criteria: String,
     pub _2: String,
     pub _3: String,
     pub answers: Vec<DialogAnswers>,
-}
-
-impl BinaryData for Dialog {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        27
-    }
 }
 
 impl Decode for Dialog {
@@ -25,7 +21,7 @@ impl Decode for Dialog {
         let _2 = state.decode()?;
         let _3 = state.decode()?;
         let answers = state.decode()?;
-        Ok(Dialog {
+        Ok(Self {
             id,
             criteria,
             _2,
@@ -35,7 +31,11 @@ impl Decode for Dialog {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Dialog {
+    const TYPE_ID: i16 = 27;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct DialogAnswers {
     pub id: i32,
     pub criterion: String,
@@ -49,7 +49,7 @@ impl Decode for DialogAnswers {
         let criterion = state.decode()?;
         let kind = state.decode()?;
         let client_only = state.decode()?;
-        Ok(DialogAnswers {
+        Ok(Self {
             id,
             criterion,
             kind,

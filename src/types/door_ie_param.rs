@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct DoorIeParam {
     pub id: i32,
     pub visual_id: i32,
@@ -11,12 +13,6 @@ pub struct DoorIeParam {
     pub item_needed: i32,
     pub kama_cost: i32,
     pub criterion: String,
-}
-
-impl BinaryData for DoorIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        118
-    }
 }
 
 impl Decode for DoorIeParam {
@@ -27,7 +23,7 @@ impl Decode for DoorIeParam {
         let item_needed = state.decode()?;
         let kama_cost = state.decode()?;
         let criterion = state.decode()?;
-        Ok(DoorIeParam {
+        Ok(Self {
             id,
             visual_id,
             consume_item,
@@ -36,4 +32,8 @@ impl Decode for DoorIeParam {
             criterion,
         })
     }
+}
+
+impl BinaryData for DoorIeParam {
+    const TYPE_ID: i16 = 118;
 }

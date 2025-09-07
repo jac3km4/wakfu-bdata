@@ -1,20 +1,16 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct InstanceInteractionLevel {
     pub id: i32,
     pub world_id: i32,
     pub subscription_level: i32,
     pub interaction_level: i32,
-}
-
-impl BinaryData for InstanceInteractionLevel {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        134
-    }
 }
 
 impl Decode for InstanceInteractionLevel {
@@ -23,11 +19,15 @@ impl Decode for InstanceInteractionLevel {
         let world_id = state.decode()?;
         let subscription_level = state.decode()?;
         let interaction_level = state.decode()?;
-        Ok(InstanceInteractionLevel {
+        Ok(Self {
             id,
             world_id,
             subscription_level,
             interaction_level,
         })
     }
+}
+
+impl BinaryData for InstanceInteractionLevel {
+    const TYPE_ID: i16 = 134;
 }

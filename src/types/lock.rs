@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Lock {
     pub id: i32,
     pub locked_item_id: i32,
@@ -11,12 +13,6 @@ pub struct Lock {
     pub period_duration: i64,
     pub unlock_date: i64,
     pub available_for_citizens_only: bool,
-}
-
-impl BinaryData for Lock {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        120
-    }
 }
 
 impl Decode for Lock {
@@ -27,7 +23,7 @@ impl Decode for Lock {
         let period_duration = state.decode()?;
         let unlock_date = state.decode()?;
         let available_for_citizens_only = state.decode()?;
-        Ok(Lock {
+        Ok(Self {
             id,
             locked_item_id,
             lock_value,
@@ -36,4 +32,8 @@ impl Decode for Lock {
             available_for_citizens_only,
         })
     }
+}
+
+impl BinaryData for Lock {
+    const TYPE_ID: i16 = 120;
 }

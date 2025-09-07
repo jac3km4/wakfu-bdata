@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Monster {
     pub id: i32,
     pub family_id: i32,
@@ -49,9 +51,9 @@ pub struct Monster {
     pub base_earth_resistance: i32,
     pub base_wind_resistance: i32,
     pub base_tackle_resistance: i32,
-    pub base_a_p_loss_resistance: i32,
-    pub base_p_m_loss_resistance: i32,
-    pub base_w_p_loss_resistance: i32,
+    pub base_ap_loss_resistance: i32,
+    pub base_pm_loss_resistance: i32,
+    pub base_wp_loss_resistance: i32,
     pub healing_bonus_inc: f32,
     pub tackle_bonus_inc: f32,
     pub fire_damage_bonus_inc: f32,
@@ -96,12 +98,6 @@ pub struct Monster {
     pub gfx: i32,
     pub timeline_gfx: i32,
     pub _90: String,
-}
-
-impl BinaryData for Monster {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        42
-    }
 }
 
 impl Decode for Monster {
@@ -150,9 +146,9 @@ impl Decode for Monster {
         let base_earth_resistance = state.decode()?;
         let base_wind_resistance = state.decode()?;
         let base_tackle_resistance = state.decode()?;
-        let base_a_p_loss_resistance = state.decode()?;
-        let base_p_m_loss_resistance = state.decode()?;
-        let base_w_p_loss_resistance = state.decode()?;
+        let base_ap_loss_resistance = state.decode()?;
+        let base_pm_loss_resistance = state.decode()?;
+        let base_wp_loss_resistance = state.decode()?;
         let healing_bonus_inc = state.decode()?;
         let tackle_bonus_inc = state.decode()?;
         let fire_damage_bonus_inc = state.decode()?;
@@ -197,7 +193,7 @@ impl Decode for Monster {
         let gfx = state.decode()?;
         let timeline_gfx = state.decode()?;
         let _90 = state.decode()?;
-        Ok(Monster {
+        Ok(Self {
             id,
             family_id,
             level_min,
@@ -242,9 +238,9 @@ impl Decode for Monster {
             base_earth_resistance,
             base_wind_resistance,
             base_tackle_resistance,
-            base_a_p_loss_resistance,
-            base_p_m_loss_resistance,
-            base_w_p_loss_resistance,
+            base_ap_loss_resistance,
+            base_pm_loss_resistance,
+            base_wp_loss_resistance,
             healing_bonus_inc,
             tackle_bonus_inc,
             fire_damage_bonus_inc,
@@ -293,92 +289,63 @@ impl Decode for Monster {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterSpecialGfxAnim {
-    pub key: i8,
-    pub anim_name: String,
+impl BinaryData for Monster {
+    const TYPE_ID: i16 = 42;
 }
 
-impl Decode for MonsterSpecialGfxAnim {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let key = state.decode()?;
-        let anim_name = state.decode()?;
-        Ok(MonsterSpecialGfxAnim { key, anim_name })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterSpecialGfxColor {
-    pub part_index: i32,
-    pub color: i32,
-}
-
-impl Decode for MonsterSpecialGfxColor {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let part_index = state.decode()?;
-        let color = state.decode()?;
-        Ok(MonsterSpecialGfxColor { part_index, color })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterSpecialGfxEquipement {
-    pub file_id: String,
-    pub parts: Vec<String>,
-}
-
-impl Decode for MonsterSpecialGfxEquipement {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let file_id = state.decode()?;
-        let parts = state.decode()?;
-        Ok(MonsterSpecialGfxEquipement { file_id, parts })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterMonsterEvolutionData {
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterSpellsIdAndLevel {
     pub id: i32,
-    pub breed_id: i32,
-    pub script_id: i32,
+    pub level: i32,
 }
 
-impl Decode for MonsterMonsterEvolutionData {
+impl Decode for MonsterSpellsIdAndLevel {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
-        let breed_id = state.decode()?;
-        let script_id = state.decode()?;
-        Ok(MonsterMonsterEvolutionData {
-            id,
-            breed_id,
-            script_id,
-        })
+        let level = state.decode()?;
+        Ok(Self { id, level })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterMonsterBehaviourData {
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterMonsterActionData {
     pub id: i32,
-    pub kind: i32,
+    pub kind: i8,
+    pub criteria: String,
+    pub criteria_on_npc: bool,
+    pub move_to_monster_before_interact_with_him: bool,
+    pub duration: i32,
+    pub show_progress_bar: bool,
+    pub visual_id: i32,
     pub script_id: i32,
-    pub needs_to_wait_path_end: bool,
 }
 
-impl Decode for MonsterMonsterBehaviourData {
+impl Decode for MonsterMonsterActionData {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
         let kind = state.decode()?;
+        let criteria = state.decode()?;
+        let criteria_on_npc = state.decode()?;
+        let move_to_monster_before_interact_with_him = state.decode()?;
+        let duration = state.decode()?;
+        let show_progress_bar = state.decode()?;
+        let visual_id = state.decode()?;
         let script_id = state.decode()?;
-        let needs_to_wait_path_end = state.decode()?;
-        Ok(MonsterMonsterBehaviourData {
+        Ok(Self {
             id,
             kind,
+            criteria,
+            criteria_on_npc,
+            move_to_monster_before_interact_with_him,
+            duration,
+            show_progress_bar,
+            visual_id,
             script_id,
-            needs_to_wait_path_end,
         })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct MonsterMonsterCollectActionData {
     pub id: i32,
     pub skill_id: i32,
@@ -406,7 +373,7 @@ impl Decode for MonsterMonsterCollectActionData {
         let collect_item_id = state.decode()?;
         let loot_list = state.decode()?;
         let display_in_craft_dialog = state.decode()?;
-        Ok(MonsterMonsterCollectActionData {
+        Ok(Self {
             id,
             skill_id,
             skill_level_required,
@@ -422,54 +389,87 @@ impl Decode for MonsterMonsterCollectActionData {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterMonsterActionData {
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterMonsterBehaviourData {
     pub id: i32,
-    pub kind: i8,
-    pub criteria: String,
-    pub criteria_on_npc: bool,
-    pub move_to_monster_before_interact_with_him: bool,
-    pub duration: i32,
-    pub show_progress_bar: bool,
-    pub visual_id: i32,
+    pub kind: i32,
     pub script_id: i32,
+    pub needs_to_wait_path_end: bool,
 }
 
-impl Decode for MonsterMonsterActionData {
+impl Decode for MonsterMonsterBehaviourData {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let id = state.decode()?;
         let kind = state.decode()?;
-        let criteria = state.decode()?;
-        let criteria_on_npc = state.decode()?;
-        let move_to_monster_before_interact_with_him = state.decode()?;
-        let duration = state.decode()?;
-        let show_progress_bar = state.decode()?;
-        let visual_id = state.decode()?;
         let script_id = state.decode()?;
-        Ok(MonsterMonsterActionData {
+        let needs_to_wait_path_end = state.decode()?;
+        Ok(Self {
             id,
             kind,
-            criteria,
-            criteria_on_npc,
-            move_to_monster_before_interact_with_him,
-            duration,
-            show_progress_bar,
-            visual_id,
+            script_id,
+            needs_to_wait_path_end,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterMonsterEvolutionData {
+    pub id: i32,
+    pub breed_id: i32,
+    pub script_id: i32,
+}
+
+impl Decode for MonsterMonsterEvolutionData {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let id = state.decode()?;
+        let breed_id = state.decode()?;
+        let script_id = state.decode()?;
+        Ok(Self {
+            id,
+            breed_id,
             script_id,
         })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct MonsterSpellsIdAndLevel {
-    pub id: i32,
-    pub level: i32,
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterSpecialGfxEquipement {
+    pub file_id: String,
+    pub parts: Vec<String>,
 }
 
-impl Decode for MonsterSpellsIdAndLevel {
+impl Decode for MonsterSpecialGfxEquipement {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let id = state.decode()?;
-        let level = state.decode()?;
-        Ok(MonsterSpellsIdAndLevel { id, level })
+        let file_id = state.decode()?;
+        let parts = state.decode()?;
+        Ok(Self { file_id, parts })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterSpecialGfxColor {
+    pub part_index: i32,
+    pub color: i32,
+}
+
+impl Decode for MonsterSpecialGfxColor {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let part_index = state.decode()?;
+        let color = state.decode()?;
+        Ok(Self { part_index, color })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MonsterSpecialGfxAnim {
+    pub key: i8,
+    pub anim_name: String,
+}
+
+impl Decode for MonsterSpecialGfxAnim {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let key = state.decode()?;
+        let anim_name = state.decode()?;
+        Ok(Self { key, anim_name })
     }
 }

@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct GenericActivableIeParam {
     pub id: i32,
     pub visuals: Vec<GenericActivableIeParamVisuals>,
     pub _2: GenericActivableIeParam_2,
-}
-
-impl BinaryData for GenericActivableIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        31
-    }
 }
 
 impl Decode for GenericActivableIeParam {
@@ -21,25 +17,15 @@ impl Decode for GenericActivableIeParam {
         let id = state.decode()?;
         let visuals = state.decode()?;
         let _2 = state.decode()?;
-        Ok(GenericActivableIeParam { id, visuals, _2 })
+        Ok(Self { id, visuals, _2 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct GenericActivableIeParam_2 {
-    pub _0: i8,
-    pub _1: i32,
+impl BinaryData for GenericActivableIeParam {
+    const TYPE_ID: i16 = 31;
 }
 
-impl Decode for GenericActivableIeParam_2 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        Ok(GenericActivableIeParam_2 { _0, _1 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GenericActivableIeParamVisualsGroupActionsActions {
     pub action_id: i32,
     pub action_type_id: i32,
@@ -53,7 +39,7 @@ impl Decode for GenericActivableIeParamVisualsGroupActionsActions {
         let action_type_id = state.decode()?;
         let criteria = state.decode()?;
         let action_params = state.decode()?;
-        Ok(GenericActivableIeParamVisualsGroupActionsActions {
+        Ok(Self {
             action_id,
             action_type_id,
             criteria,
@@ -62,7 +48,7 @@ impl Decode for GenericActivableIeParamVisualsGroupActionsActions {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GenericActivableIeParamVisualsGroupActions {
     pub id: i32,
     pub criteria: String,
@@ -76,7 +62,7 @@ impl Decode for GenericActivableIeParamVisualsGroupActions {
         let criteria = state.decode()?;
         let weight = state.decode()?;
         let actions = state.decode()?;
-        Ok(GenericActivableIeParamVisualsGroupActions {
+        Ok(Self {
             id,
             criteria,
             weight,
@@ -85,7 +71,7 @@ impl Decode for GenericActivableIeParamVisualsGroupActions {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GenericActivableIeParamVisuals {
     pub id: i32,
     pub visual_id: i32,
@@ -107,7 +93,7 @@ impl Decode for GenericActivableIeParamVisuals {
         let kama_cost = state.decode()?;
         let distribution_duration = state.decode()?;
         let group_actions = state.decode()?;
-        Ok(GenericActivableIeParamVisuals {
+        Ok(Self {
             id,
             visual_id,
             item_consumed,
@@ -117,5 +103,19 @@ impl Decode for GenericActivableIeParamVisuals {
             distribution_duration,
             group_actions,
         })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct GenericActivableIeParam_2 {
+    pub _0: i8,
+    pub _1: i32,
+}
+
+impl Decode for GenericActivableIeParam_2 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        Ok(Self { _0, _1 })
     }
 }

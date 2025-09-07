@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MonsterBlahblah {
     pub _0: i32,
     pub _1: i32,
     pub _2: i32,
     pub _3: i8,
     pub _4: Vec<MonsterBlahblah_4>,
-}
-
-impl BinaryData for MonsterBlahblah {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        43
-    }
 }
 
 impl Decode for MonsterBlahblah {
@@ -25,11 +21,15 @@ impl Decode for MonsterBlahblah {
         let _2 = state.decode()?;
         let _3 = state.decode()?;
         let _4 = state.decode()?;
-        Ok(MonsterBlahblah { _0, _1, _2, _3, _4 })
+        Ok(Self { _0, _1, _2, _3, _4 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for MonsterBlahblah {
+    const TYPE_ID: i16 = 43;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MonsterBlahblah_4 {
     pub _0: i32,
     pub _1: i8,
@@ -43,6 +43,6 @@ impl Decode for MonsterBlahblah_4 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(MonsterBlahblah_4 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }

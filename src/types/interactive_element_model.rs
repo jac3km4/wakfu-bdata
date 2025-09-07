@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct InteractiveElementModel {
     pub id: i32,
     pub kind: i16,
@@ -12,12 +14,6 @@ pub struct InteractiveElementModel {
     pub height: i8,
     pub particle_id: i32,
     pub particle_offset_z: i32,
-}
-
-impl BinaryData for InteractiveElementModel {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        34
-    }
 }
 
 impl Decode for InteractiveElementModel {
@@ -29,7 +25,7 @@ impl Decode for InteractiveElementModel {
         let height = state.decode()?;
         let particle_id = state.decode()?;
         let particle_offset_z = state.decode()?;
-        Ok(InteractiveElementModel {
+        Ok(Self {
             id,
             kind,
             gfx,
@@ -39,4 +35,8 @@ impl Decode for InteractiveElementModel {
             particle_offset_z,
         })
     }
+}
+
+impl BinaryData for InteractiveElementModel {
+    const TYPE_ID: i16 = 34;
 }

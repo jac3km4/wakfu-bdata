@@ -1,18 +1,25 @@
-use std::{fs::File, path::Path};
+use std::fs::File;
+use std::path::Path;
 
 use serde::Serialize;
-use wakfudecrypt::{
-    document::Document, types::{item::Item, item_set::ItemSet, pet::Pet, static_effect::StaticEffect}, BinaryData
-};
+use wakfudecrypt::data::BinaryData;
+use wakfudecrypt::document::Document;
+use wakfudecrypt::types::item::Item;
+use wakfudecrypt::types::item_set::ItemSet;
+use wakfudecrypt::types::pet::Pet;
+use wakfudecrypt::types::static_effect::StaticEffect;
 
 fn main() {
-    let arg = std::env::args().nth(1).expect("Please provide a file path");
+    let arg = std::env::args()
+        .nth(1)
+        .expect("Please provide a path to the game root dir");
     let path = Path::new(&arg);
 
-    dump_doc::<Item>(&path);
-    dump_doc::<ItemSet>(&path);
-    dump_doc::<Pet>(&path);
-    dump_doc::<StaticEffect>(&path);
+    dump_doc::<Item>(path);
+    dump_doc::<ItemSet>(path);
+    dump_doc::<Pet>(path);
+    dump_doc::<StaticEffect>(path);
+    // Can add any other types from the `types` crate here.
 }
 
 fn dump_doc<A: BinaryData + Serialize>(path: &Path) {

@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct ItemType {
     pub id: i16,
     pub parent_id: i16,
@@ -13,12 +15,6 @@ pub struct ItemType {
     pub disabled_equipement_position: Vec<String>,
     pub _6: bool,
     pub material_type: i16,
-}
-
-impl BinaryData for ItemType {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        37
-    }
 }
 
 impl Decode for ItemType {
@@ -31,7 +27,7 @@ impl Decode for ItemType {
         let disabled_equipement_position = state.decode()?;
         let _6 = state.decode()?;
         let material_type = state.decode()?;
-        Ok(ItemType {
+        Ok(Self {
             id,
             parent_id,
             visible_in_animations,
@@ -42,4 +38,8 @@ impl Decode for ItemType {
             material_type,
         })
     }
+}
+
+impl BinaryData for ItemType {
+    const TYPE_ID: i16 = 37;
 }

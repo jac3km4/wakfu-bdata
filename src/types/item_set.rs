@@ -1,20 +1,16 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct ItemSet {
     pub id: i16,
     pub linked_item_reference_id: i32,
     pub items_id: Vec<i32>,
     pub effect_ids_by_part_count: std::collections::HashMap<i32, Vec<i32>>,
-}
-
-impl BinaryData for ItemSet {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        36
-    }
 }
 
 impl Decode for ItemSet {
@@ -23,11 +19,15 @@ impl Decode for ItemSet {
         let linked_item_reference_id = state.decode()?;
         let items_id = state.decode()?;
         let effect_ids_by_part_count = state.decode()?;
-        Ok(ItemSet {
+        Ok(Self {
             id,
             linked_item_reference_id,
             items_id,
             effect_ids_by_part_count,
         })
     }
+}
+
+impl BinaryData for ItemSet {
+    const TYPE_ID: i16 = 36;
 }

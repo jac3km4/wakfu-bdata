@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MagicraftLootList {
     pub id: i32,
     pub gem_type: i8,
     pub entries: Vec<MagicraftLootListEntries>,
-}
-
-impl BinaryData for MagicraftLootList {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        123
-    }
 }
 
 impl Decode for MagicraftLootList {
@@ -21,11 +17,19 @@ impl Decode for MagicraftLootList {
         let id = state.decode()?;
         let gem_type = state.decode()?;
         let entries = state.decode()?;
-        Ok(MagicraftLootList { id, gem_type, entries })
+        Ok(Self {
+            id,
+            gem_type,
+            entries,
+        })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for MagicraftLootList {
+    const TYPE_ID: i16 = 123;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MagicraftLootListEntries {
     pub item_id: i32,
     pub drop_rate: f64,
@@ -35,6 +39,6 @@ impl Decode for MagicraftLootListEntries {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let item_id = state.decode()?;
         let drop_rate = state.decode()?;
-        Ok(MagicraftLootListEntries { item_id, drop_rate })
+        Ok(Self { item_id, drop_rate })
     }
 }

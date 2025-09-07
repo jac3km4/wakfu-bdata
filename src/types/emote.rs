@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Emote {
     pub id: i32,
     pub kind: i16,
@@ -17,12 +19,6 @@ pub struct Emote {
     pub _9: String,
     pub _10: Vec<i32>,
     pub _11: Vec<i32>,
-}
-
-impl BinaryData for Emote {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        81
-    }
 }
 
 impl Decode for Emote {
@@ -39,7 +35,7 @@ impl Decode for Emote {
         let _9 = state.decode()?;
         let _10 = state.decode()?;
         let _11 = state.decode()?;
-        Ok(Emote {
+        Ok(Self {
             id,
             kind,
             cmd,
@@ -54,4 +50,8 @@ impl Decode for Emote {
             _11,
         })
     }
+}
+
+impl BinaryData for Emote {
+    const TYPE_ID: i16 = 81;
 }

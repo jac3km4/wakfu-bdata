@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct BackgroundFeedback {
     pub id: i32,
     pub kind: i16,
     pub pages: Vec<BackgroundFeedbackPages>,
-}
-
-impl BinaryData for BackgroundFeedback {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        6
-    }
 }
 
 impl Decode for BackgroundFeedback {
@@ -21,11 +17,15 @@ impl Decode for BackgroundFeedback {
         let id = state.decode()?;
         let kind = state.decode()?;
         let pages = state.decode()?;
-        Ok(BackgroundFeedback { id, kind, pages })
+        Ok(Self { id, kind, pages })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for BackgroundFeedback {
+    const TYPE_ID: i16 = 6;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct BackgroundFeedbackPages {
     pub id: i32,
     pub order: i16,
@@ -39,7 +39,7 @@ impl Decode for BackgroundFeedbackPages {
         let order = state.decode()?;
         let template = state.decode()?;
         let image_id = state.decode()?;
-        Ok(BackgroundFeedbackPages {
+        Ok(Self {
             id,
             order,
             template,

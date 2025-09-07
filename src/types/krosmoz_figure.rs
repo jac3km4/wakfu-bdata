@@ -1,20 +1,16 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct KrosmozFigure {
     pub id: i32,
     pub year: i32,
     pub addon: i32,
     pub season: i32,
-}
-
-impl BinaryData for KrosmozFigure {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        113
-    }
 }
 
 impl Decode for KrosmozFigure {
@@ -23,11 +19,15 @@ impl Decode for KrosmozFigure {
         let year = state.decode()?;
         let addon = state.decode()?;
         let season = state.decode()?;
-        Ok(KrosmozFigure {
+        Ok(Self {
             id,
             year,
             addon,
             season,
         })
     }
+}
+
+impl BinaryData for KrosmozFigure {
+    const TYPE_ID: i16 = 113;
 }

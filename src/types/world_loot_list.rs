@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct WorldLootList {
     pub _0: i32,
     pub _1: f64,
@@ -12,12 +14,6 @@ pub struct WorldLootList {
     pub _4: String,
     pub _5: i16,
     pub _6: Vec<WorldLootList_6>,
-}
-
-impl BinaryData for WorldLootList {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        75
-    }
 }
 
 impl Decode for WorldLootList {
@@ -29,7 +25,7 @@ impl Decode for WorldLootList {
         let _4 = state.decode()?;
         let _5 = state.decode()?;
         let _6 = state.decode()?;
-        Ok(WorldLootList {
+        Ok(Self {
             _0,
             _1,
             _2,
@@ -41,7 +37,11 @@ impl Decode for WorldLootList {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for WorldLootList {
+    const TYPE_ID: i16 = 75;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct WorldLootList_6 {
     pub _0: i32,
     pub _1: f64,
@@ -65,7 +65,7 @@ impl Decode for WorldLootList_6 {
         let _6 = state.decode()?;
         let _7 = state.decode()?;
         let _8 = state.decode()?;
-        Ok(WorldLootList_6 {
+        Ok(Self {
             _0,
             _1,
             _2,

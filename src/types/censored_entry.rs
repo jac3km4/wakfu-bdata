@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct CensoredEntry {
     pub id: i32,
     pub deep_search: bool,
     pub language: i32,
     pub censor_type: i32,
     pub text: String,
-}
-
-impl BinaryData for CensoredEntry {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        13
-    }
 }
 
 impl Decode for CensoredEntry {
@@ -25,7 +21,7 @@ impl Decode for CensoredEntry {
         let language = state.decode()?;
         let censor_type = state.decode()?;
         let text = state.decode()?;
-        Ok(CensoredEntry {
+        Ok(Self {
             id,
             deep_search,
             language,
@@ -33,4 +29,8 @@ impl Decode for CensoredEntry {
             text,
         })
     }
+}
+
+impl BinaryData for CensoredEntry {
+    const TYPE_ID: i16 = 13;
 }

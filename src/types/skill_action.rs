@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct SkillAction {
     pub id: i32,
     pub mru_gfx_id: i32,
     pub mru_key: String,
     pub associated_items: Vec<i32>,
     pub anim_linkage: String,
-}
-
-impl BinaryData for SkillAction {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        65
-    }
 }
 
 impl Decode for SkillAction {
@@ -25,7 +21,7 @@ impl Decode for SkillAction {
         let mru_key = state.decode()?;
         let associated_items = state.decode()?;
         let anim_linkage = state.decode()?;
-        Ok(SkillAction {
+        Ok(Self {
             id,
             mru_gfx_id,
             mru_key,
@@ -33,4 +29,8 @@ impl Decode for SkillAction {
             anim_linkage,
         })
     }
+}
+
+impl BinaryData for SkillAction {
+    const TYPE_ID: i16 = 65;
 }

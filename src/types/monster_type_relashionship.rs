@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct MonsterTypeRelashionship {
     pub id: i32,
     pub family_from: i32,
     pub family_to: i32,
-}
-
-impl BinaryData for MonsterTypeRelashionship {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        49
-    }
 }
 
 impl Decode for MonsterTypeRelashionship {
@@ -21,10 +17,14 @@ impl Decode for MonsterTypeRelashionship {
         let id = state.decode()?;
         let family_from = state.decode()?;
         let family_to = state.decode()?;
-        Ok(MonsterTypeRelashionship {
+        Ok(Self {
             id,
             family_from,
             family_to,
         })
     }
+}
+
+impl BinaryData for MonsterTypeRelashionship {
+    const TYPE_ID: i16 = 49;
 }

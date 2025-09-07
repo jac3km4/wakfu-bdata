@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct HavenWorldBuildingDecoDefinition {
     pub id: i32,
     pub catalog_entry_id: i16,
     pub kama_cost: i32,
     pub ressource_cost: i32,
     pub editor_group_id: i32,
-}
-
-impl BinaryData for HavenWorldBuildingDecoDefinition {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        126
-    }
 }
 
 impl Decode for HavenWorldBuildingDecoDefinition {
@@ -25,7 +21,7 @@ impl Decode for HavenWorldBuildingDecoDefinition {
         let kama_cost = state.decode()?;
         let ressource_cost = state.decode()?;
         let editor_group_id = state.decode()?;
-        Ok(HavenWorldBuildingDecoDefinition {
+        Ok(Self {
             id,
             catalog_entry_id,
             kama_cost,
@@ -33,4 +29,8 @@ impl Decode for HavenWorldBuildingDecoDefinition {
             editor_group_id,
         })
     }
+}
+
+impl BinaryData for HavenWorldBuildingDecoDefinition {
+    const TYPE_ID: i16 = 126;
 }

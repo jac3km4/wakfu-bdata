@@ -1,29 +1,29 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Teleporter {
     pub teleporter_id: i32,
     pub _1: Vec<Teleporter_1>,
-}
-
-impl BinaryData for Teleporter {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        72
-    }
 }
 
 impl Decode for Teleporter {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let teleporter_id = state.decode()?;
         let _1 = state.decode()?;
-        Ok(Teleporter { teleporter_id, _1 })
+        Ok(Self { teleporter_id, _1 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Teleporter {
+    const TYPE_ID: i16 = 72;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Teleporter_1 {
     pub _0: i32,
     pub _1: i32,
@@ -69,7 +69,7 @@ impl Decode for Teleporter_1 {
         let _17 = state.decode()?;
         let _18 = state.decode()?;
         let _19 = state.decode()?;
-        Ok(Teleporter_1 {
+        Ok(Self {
             _0,
             _1,
             _2,

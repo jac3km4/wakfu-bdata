@@ -1,8 +1,8 @@
-use byteorder::LittleEndian;
-use byteorder::ReadBytesExt;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::io;
+
+use byteorder::{LittleEndian, ReadBytesExt};
 
 pub struct DecodeState<R> {
     inner: R,
@@ -66,21 +66,30 @@ impl Decode for i8 {
 impl Decode for i16 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         state.advance(2);
-        Ok(state.inner.read_i16::<LittleEndian>()?.wrapping_sub(state.seed as i16))
+        Ok(state
+            .inner
+            .read_i16::<LittleEndian>()?
+            .wrapping_sub(state.seed as i16))
     }
 }
 
 impl Decode for i32 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         state.advance(4);
-        Ok(state.inner.read_i32::<LittleEndian>()?.wrapping_sub(state.seed as i32))
+        Ok(state
+            .inner
+            .read_i32::<LittleEndian>()?
+            .wrapping_sub(state.seed as i32))
     }
 }
 
 impl Decode for i64 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         state.advance(8);
-        Ok(state.inner.read_i64::<LittleEndian>()?.wrapping_sub(state.seed as i64))
+        Ok(state
+            .inner
+            .read_i64::<LittleEndian>()?
+            .wrapping_sub(state.seed as i64))
     }
 }
 
@@ -130,7 +139,11 @@ impl<A: Decode> Decode for Vec<A> {
 impl<A: Decode> Decode for Option<A> {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let is_some = state.decode::<bool>()?;
-        if is_some { Ok(Some(state.decode()?)) } else { Ok(None) }
+        if is_some {
+            Ok(Some(state.decode()?))
+        } else {
+            Ok(None)
+        }
     }
 }
 

@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Achievement {
     pub id: i32,
     pub category_id: i32,
@@ -30,15 +32,9 @@ pub struct Achievement {
     pub is_mercenary: bool,
     pub mercenary_item_id: i32,
     pub mercenary_rank: i8,
-    pub order: i32,
+    pub _25: i32,
     pub _26: String,
-    pub _27: i32,
-}
-
-impl BinaryData for Achievement {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        1
-    }
+    pub order: i32,
 }
 
 impl Decode for Achievement {
@@ -68,10 +64,10 @@ impl Decode for Achievement {
         let is_mercenary = state.decode()?;
         let mercenary_item_id = state.decode()?;
         let mercenary_rank = state.decode()?;
-        let order = state.decode()?;
+        let _25 = state.decode()?;
         let _26 = state.decode()?;
-        let _27 = state.decode()?;
-        Ok(Achievement {
+        let order = state.decode()?;
+        Ok(Self {
             id,
             category_id,
             is_visible,
@@ -97,48 +93,18 @@ impl Decode for Achievement {
             is_mercenary,
             mercenary_item_id,
             mercenary_rank,
-            order,
+            _25,
             _26,
-            _27,
+            order,
         })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct Achievement_8 {
-    pub _0: i32,
-    pub _1: i32,
-    pub _2: bool,
-    pub _3: Vec<i32>,
+impl BinaryData for Achievement {
+    const TYPE_ID: i16 = 1;
 }
 
-impl Decode for Achievement_8 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        let _2 = state.decode()?;
-        let _3 = state.decode()?;
-        Ok(Achievement_8 { _0, _1, _2, _3 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct Achievement_7_5 {
-    pub _0: i32,
-    pub _1: String,
-    pub _2: Vec<i32>,
-}
-
-impl Decode for Achievement_7_5 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        let _2 = state.decode()?;
-        Ok(Achievement_7_5 { _0, _1, _2 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Achievement_7_3 {
     pub _0: i16,
     pub _1: i16,
@@ -152,11 +118,27 @@ impl Decode for Achievement_7_3 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(Achievement_7_3 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
+pub struct Achievement_7_5 {
+    pub _0: i32,
+    pub _1: String,
+    pub _2: Vec<i32>,
+}
+
+impl Decode for Achievement_7_5 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        let _2 = state.decode()?;
+        Ok(Self { _0, _1, _2 })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Achievement_7 {
     pub _0: i32,
     pub _1: bool,
@@ -174,6 +156,31 @@ impl Decode for Achievement_7 {
         let _3 = state.decode()?;
         let _4 = state.decode()?;
         let _5 = state.decode()?;
-        Ok(Achievement_7 { _0, _1, _2, _3, _4, _5 })
+        Ok(Self {
+            _0,
+            _1,
+            _2,
+            _3,
+            _4,
+            _5,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Achievement_8 {
+    pub _0: i32,
+    pub _1: i32,
+    pub _2: bool,
+    pub _3: Vec<i32>,
+}
+
+impl Decode for Achievement_8 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        let _2 = state.decode()?;
+        let _3 = state.decode()?;
+        Ok(Self { _0, _1, _2, _3 })
     }
 }

@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct StreetLightIeParam {
     pub id: i32,
     pub color: i32,
@@ -17,12 +19,6 @@ pub struct StreetLightIeParam {
     pub extinction_use_object: bool,
     pub extinction_duration: i32,
     pub _11: StreetLightIeParam_11,
-}
-
-impl BinaryData for StreetLightIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        71
-    }
 }
 
 impl Decode for StreetLightIeParam {
@@ -39,7 +35,7 @@ impl Decode for StreetLightIeParam {
         let extinction_use_object = state.decode()?;
         let extinction_duration = state.decode()?;
         let _11 = state.decode()?;
-        Ok(StreetLightIeParam {
+        Ok(Self {
             id,
             color,
             range,
@@ -56,7 +52,11 @@ impl Decode for StreetLightIeParam {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for StreetLightIeParam {
+    const TYPE_ID: i16 = 71;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct StreetLightIeParam_11 {
     pub _0: i8,
     pub _1: i32,
@@ -66,6 +66,6 @@ impl Decode for StreetLightIeParam_11 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let _0 = state.decode()?;
         let _1 = state.decode()?;
-        Ok(StreetLightIeParam_11 { _0, _1 })
+        Ok(Self { _0, _1 })
     }
 }

@@ -1,21 +1,17 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct DungeonLadderRewards {
     pub _0: i32,
     pub _1: i32,
     pub _2: i16,
     pub _3: i32,
     pub _4: i32,
-}
-
-impl BinaryData for DungeonLadderRewards {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        142
-    }
 }
 
 impl Decode for DungeonLadderRewards {
@@ -25,6 +21,10 @@ impl Decode for DungeonLadderRewards {
         let _2 = state.decode()?;
         let _3 = state.decode()?;
         let _4 = state.decode()?;
-        Ok(DungeonLadderRewards { _0, _1, _2, _3, _4 })
+        Ok(Self { _0, _1, _2, _3, _4 })
     }
+}
+
+impl BinaryData for DungeonLadderRewards {
+    const TYPE_ID: i16 = 142;
 }

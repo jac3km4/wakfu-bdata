@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Ground {
     pub id: i32,
     pub resource_fertility: std::collections::HashMap<i32, i16>,
     pub resource_type_fertility: std::collections::HashMap<i16, i16>,
-}
-
-impl BinaryData for Ground {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        32
-    }
 }
 
 impl Decode for Ground {
@@ -21,10 +17,14 @@ impl Decode for Ground {
         let id = state.decode()?;
         let resource_fertility = state.decode()?;
         let resource_type_fertility = state.decode()?;
-        Ok(Ground {
+        Ok(Self {
             id,
             resource_fertility,
             resource_type_fertility,
         })
     }
+}
+
+impl BinaryData for Ground {
+    const TYPE_ID: i16 = 32;
 }

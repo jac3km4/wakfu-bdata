@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Craft {
     pub craft_id: i32,
     pub book_item_id: i32,
@@ -11,12 +13,6 @@ pub struct Craft {
     pub innate: bool,
     pub conceptual_craft: bool,
     pub hidden_craft: bool,
-}
-
-impl BinaryData for Craft {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        23
-    }
 }
 
 impl Decode for Craft {
@@ -27,7 +23,7 @@ impl Decode for Craft {
         let innate = state.decode()?;
         let conceptual_craft = state.decode()?;
         let hidden_craft = state.decode()?;
-        Ok(Craft {
+        Ok(Self {
             craft_id,
             book_item_id,
             xp_factor,
@@ -36,4 +32,8 @@ impl Decode for Craft {
             hidden_craft,
         })
     }
+}
+
+impl BinaryData for Craft {
+    const TYPE_ID: i16 = 23;
 }

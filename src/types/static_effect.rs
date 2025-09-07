@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct StaticEffect {
     pub effect_id: i32,
     pub action_id: i32,
@@ -62,12 +64,6 @@ pub struct StaticEffect {
     pub recompute_area_of_effect_display: bool,
     pub is_in_turn_in_fight: bool,
     pub notify_in_chat: bool,
-}
-
-impl BinaryData for StaticEffect {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        68
-    }
 }
 
 impl Decode for StaticEffect {
@@ -129,7 +125,7 @@ impl Decode for StaticEffect {
         let recompute_area_of_effect_display = state.decode()?;
         let is_in_turn_in_fight = state.decode()?;
         let notify_in_chat = state.decode()?;
-        Ok(StaticEffect {
+        Ok(Self {
             effect_id,
             action_id,
             parent_id,
@@ -189,4 +185,8 @@ impl Decode for StaticEffect {
             notify_in_chat,
         })
     }
+}
+
+impl BinaryData for StaticEffect {
+    const TYPE_ID: i16 = 68;
 }

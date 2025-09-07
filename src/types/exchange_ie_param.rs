@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct ExchangeIeParam {
     pub id: i32,
     pub aps_id: i32,
@@ -11,12 +13,6 @@ pub struct ExchangeIeParam {
     pub sort_type_id: i8,
     pub _4: Vec<ExchangeIeParam_4>,
     pub _5: ExchangeIeParam_5,
-}
-
-impl BinaryData for ExchangeIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        82
-    }
 }
 
 impl Decode for ExchangeIeParam {
@@ -27,7 +23,7 @@ impl Decode for ExchangeIeParam {
         let sort_type_id = state.decode()?;
         let _4 = state.decode()?;
         let _5 = state.decode()?;
-        Ok(ExchangeIeParam {
+        Ok(Self {
             id,
             aps_id,
             visual_mru_id,
@@ -38,21 +34,25 @@ impl Decode for ExchangeIeParam {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct ExchangeIeParam_5 {
-    pub _0: i8,
-    pub _1: i32,
+impl BinaryData for ExchangeIeParam {
+    const TYPE_ID: i16 = 82;
 }
 
-impl Decode for ExchangeIeParam_5 {
+#[derive(Debug, Clone, Serialize)]
+pub struct ExchangeIeParam_4_2 {
+    pub _0: i32,
+    pub _1: i16,
+}
+
+impl Decode for ExchangeIeParam_4_2 {
     fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
         let _0 = state.decode()?;
         let _1 = state.decode()?;
-        Ok(ExchangeIeParam_5 { _0, _1 })
+        Ok(Self { _0, _1 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ExchangeIeParam_4_5 {
     pub _0: i32,
     pub _1: i16,
@@ -66,25 +66,11 @@ impl Decode for ExchangeIeParam_4_5 {
         let _1 = state.decode()?;
         let _2 = state.decode()?;
         let _3 = state.decode()?;
-        Ok(ExchangeIeParam_4_5 { _0, _1, _2, _3 })
+        Ok(Self { _0, _1, _2, _3 })
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct ExchangeIeParam_4_2 {
-    pub _0: i32,
-    pub _1: i16,
-}
-
-impl Decode for ExchangeIeParam_4_2 {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let _0 = state.decode()?;
-        let _1 = state.decode()?;
-        Ok(ExchangeIeParam_4_2 { _0, _1 })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ExchangeIeParam_4 {
     pub _0: i32,
     pub _1: String,
@@ -104,7 +90,7 @@ impl Decode for ExchangeIeParam_4 {
         let _4 = state.decode()?;
         let _5 = state.decode()?;
         let _6 = state.decode()?;
-        Ok(ExchangeIeParam_4 {
+        Ok(Self {
             _0,
             _1,
             _2,
@@ -113,5 +99,19 @@ impl Decode for ExchangeIeParam_4 {
             _5,
             _6,
         })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ExchangeIeParam_5 {
+    pub _0: i8,
+    pub _1: i32,
+}
+
+impl Decode for ExchangeIeParam_5 {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let _0 = state.decode()?;
+        let _1 = state.decode()?;
+        Ok(Self { _0, _1 })
     }
 }

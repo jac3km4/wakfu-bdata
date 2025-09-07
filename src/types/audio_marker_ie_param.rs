@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct AudioMarkerIeParam {
     pub id: i32,
     pub audio_marker_type_id: i32,
     pub is_localized: bool,
-}
-
-impl BinaryData for AudioMarkerIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        5
-    }
 }
 
 impl Decode for AudioMarkerIeParam {
@@ -21,10 +17,14 @@ impl Decode for AudioMarkerIeParam {
         let id = state.decode()?;
         let audio_marker_type_id = state.decode()?;
         let is_localized = state.decode()?;
-        Ok(AudioMarkerIeParam {
+        Ok(Self {
             id,
             audio_marker_type_id,
             is_localized,
         })
     }
+}
+
+impl BinaryData for AudioMarkerIeParam {
+    const TYPE_ID: i16 = 5;
 }

@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct ClimateBonus {
     pub buff_id: i32,
     pub gfx_id: i32,
@@ -12,12 +14,6 @@ pub struct ClimateBonus {
     pub price: i16,
     pub temperature_difference: f32,
     pub rain_difference: f32,
-}
-
-impl BinaryData for ClimateBonus {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        20
-    }
 }
 
 impl Decode for ClimateBonus {
@@ -29,7 +25,7 @@ impl Decode for ClimateBonus {
         let price = state.decode()?;
         let temperature_difference = state.decode()?;
         let rain_difference = state.decode()?;
-        Ok(ClimateBonus {
+        Ok(Self {
             buff_id,
             gfx_id,
             criteria,
@@ -39,4 +35,8 @@ impl Decode for ClimateBonus {
             rain_difference,
         })
     }
+}
+
+impl BinaryData for ClimateBonus {
+    const TYPE_ID: i16 = 20;
 }

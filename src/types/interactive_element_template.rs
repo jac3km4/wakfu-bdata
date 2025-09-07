@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct InteractiveElementTemplate {
     pub id: i32,
     pub model_type: i16,
@@ -24,12 +26,6 @@ pub struct InteractiveElementTemplate {
     pub positions_trigger: Vec<InteractiveElementTemplatePositionsTrigger>,
     pub actions: std::collections::HashMap<i16, i32>,
     pub views: Vec<i32>,
-}
-
-impl BinaryData for InteractiveElementTemplate {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        128
-    }
 }
 
 impl Decode for InteractiveElementTemplate {
@@ -53,7 +49,7 @@ impl Decode for InteractiveElementTemplate {
         let positions_trigger = state.decode()?;
         let actions = state.decode()?;
         let views = state.decode()?;
-        Ok(InteractiveElementTemplate {
+        Ok(Self {
             id,
             model_type,
             world_id,
@@ -77,7 +73,11 @@ impl Decode for InteractiveElementTemplate {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for InteractiveElementTemplate {
+    const TYPE_ID: i16 = 128;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct InteractiveElementTemplatePositionsTrigger {
     pub x: i32,
     pub y: i32,
@@ -89,6 +89,6 @@ impl Decode for InteractiveElementTemplatePositionsTrigger {
         let x = state.decode()?;
         let y = state.decode()?;
         let z = state.decode()?;
-        Ok(InteractiveElementTemplatePositionsTrigger { x, y, z })
+        Ok(Self { x, y, z })
     }
 }

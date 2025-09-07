@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Recipe {
     pub id: i32,
     pub category_id: i32,
@@ -23,12 +25,6 @@ pub struct Recipe {
     pub ingredients: Vec<RecipeIngredients>,
     pub products: Vec<RecipeProducts>,
     pub materials: Vec<RecipeMaterials>,
-}
-
-impl BinaryData for Recipe {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        58
-    }
 }
 
 impl Decode for Recipe {
@@ -51,7 +47,7 @@ impl Decode for Recipe {
         let ingredients = state.decode()?;
         let products = state.decode()?;
         let materials = state.decode()?;
-        Ok(Recipe {
+        Ok(Self {
             id,
             category_id,
             duration,
@@ -74,7 +70,45 @@ impl Decode for Recipe {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for Recipe {
+    const TYPE_ID: i16 = 58;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct RecipeIngredients {
+    pub item_id: i32,
+    pub quantity: i16,
+    pub _3: i16,
+}
+
+impl Decode for RecipeIngredients {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let quantity = state.decode()?;
+        let _3 = state.decode()?;
+        Ok(Self {
+            item_id,
+            quantity,
+            _3,
+        })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct RecipeProducts {
+    pub item_id: i32,
+    pub quantity: i16,
+}
+
+impl Decode for RecipeProducts {
+    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
+        let item_id = state.decode()?;
+        let quantity = state.decode()?;
+        Ok(Self { item_id, quantity })
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct RecipeMaterials {
     pub min_level: i16,
     pub min_rarity: i16,
@@ -88,41 +122,11 @@ impl Decode for RecipeMaterials {
         let min_rarity = state.decode()?;
         let optionnal = state.decode()?;
         let material_types = state.decode()?;
-        Ok(RecipeMaterials {
+        Ok(Self {
             min_level,
             min_rarity,
             optionnal,
             material_types,
         })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RecipeProducts {
-    pub item_id: i32,
-    pub quantity: i16,
-}
-
-impl Decode for RecipeProducts {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let quantity = state.decode()?;
-        Ok(RecipeProducts { item_id, quantity })
-    }
-}
-
-#[derive(Debug, Clone, serde::Serialize)]
-pub struct RecipeIngredients {
-    pub item_id: i32,
-    pub quantity: i16,
-    pub _3: i16,
-}
-
-impl Decode for RecipeIngredients {
-    fn decode<R: io::Read>(state: &mut DecodeState<R>) -> io::Result<Self> {
-        let item_id = state.decode()?;
-        let quantity = state.decode()?;
-        let _3 = state.decode()?;
-        Ok(RecipeIngredients { item_id, quantity, _3 })
     }
 }

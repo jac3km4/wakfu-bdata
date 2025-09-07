@@ -1,9 +1,11 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct FightChallenge {
     pub id: i32,
     pub drop_weight: i32,
@@ -16,12 +18,6 @@ pub struct FightChallenge {
     pub incompatible_challenges: Vec<i32>,
     pub incompatible_monsters: Vec<i32>,
     pub rewards: Vec<FightChallengeRewards>,
-}
-
-impl BinaryData for FightChallenge {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        130
-    }
 }
 
 impl Decode for FightChallenge {
@@ -37,7 +33,7 @@ impl Decode for FightChallenge {
         let incompatible_challenges = state.decode()?;
         let incompatible_monsters = state.decode()?;
         let rewards = state.decode()?;
-        Ok(FightChallenge {
+        Ok(Self {
             id,
             drop_weight,
             drop_criterion,
@@ -53,7 +49,11 @@ impl Decode for FightChallenge {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+impl BinaryData for FightChallenge {
+    const TYPE_ID: i16 = 130;
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub struct FightChallengeRewards {
     pub id: i32,
     pub criterion: String,
@@ -67,7 +67,7 @@ impl Decode for FightChallengeRewards {
         let criterion = state.decode()?;
         let xp_level = state.decode()?;
         let drop_level = state.decode()?;
-        Ok(FightChallengeRewards {
+        Ok(Self {
             id,
             criterion,
             xp_level,

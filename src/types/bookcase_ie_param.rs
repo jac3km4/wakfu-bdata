@@ -1,19 +1,15 @@
-use crate::BinaryData;
-use crate::decode::{Decode, DecodeState};
 use std::io;
-use std::marker::PhantomData;
 
-#[derive(Debug, Clone, serde::Serialize)]
+use serde::Serialize;
+
+use crate::data::BinaryData;
+use crate::decode::{Decode, DecodeState};
+
+#[derive(Debug, Clone, Serialize)]
 pub struct BookcaseIeParam {
     pub id: i32,
     pub size: i8,
     pub _2: Vec<i32>,
-}
-
-impl BinaryData for BookcaseIeParam {
-    fn id(_phantom: PhantomData<Self>) -> i32 {
-        105
-    }
 }
 
 impl Decode for BookcaseIeParam {
@@ -21,6 +17,10 @@ impl Decode for BookcaseIeParam {
         let id = state.decode()?;
         let size = state.decode()?;
         let _2 = state.decode()?;
-        Ok(BookcaseIeParam { id, size, _2 })
+        Ok(Self { id, size, _2 })
     }
+}
+
+impl BinaryData for BookcaseIeParam {
+    const TYPE_ID: i16 = 105;
 }
